@@ -1,0 +1,7 @@
+{
+  "name": "RealityShield – AI Guardian Against Misinformation",
+  "description": "A multi-modal AI application to combat misinformation using deepfake detection, propaganda analysis, and augmented reality fact-checking.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
