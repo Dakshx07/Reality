@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import type { ArDetectionResult } from '../types';
 import { CameraIcon, CheckCircleIcon } from './Icons';

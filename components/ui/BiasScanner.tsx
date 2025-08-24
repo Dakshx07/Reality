@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface BiasScannerProps {
@@ -12,11 +13,10 @@ const BiasScanner: React.FC<BiasScannerProps> = ({ score, flags, alternatives })
     const scoreLabel = score < 40 ? 'High Bias' : score < 70 ? 'Moderate Bias' : 'Low Bias / Neutral';
 
     return (
-        <div className="bg-black/20 p-6 rounded-lg border border-white/10">
-            <h3 className="text-2xl font-clash font-semibold text-gray-50 mb-4">Bias & Credibility Scan</h3>
+        <div className="bg-black/20 p-4 rounded-lg">
             <div className="grid md:grid-cols-2 gap-6 items-center">
-                <div className="relative w-full max-w-xs mx-auto aspect-square flex flex-col items-center justify-center">
-                    <svg viewBox="0 0 100 50" className="w-full">
+                <div className="relative w-full max-w-xs mx-auto aspect-[4/3] flex flex-col items-center justify-center">
+                    <svg viewBox="0 0 100 50" className="w-full absolute top-0">
                         <path d="M 10 50 A 40 40 0 0 1 90 50" stroke="currentColor" className="text-neutral-700" strokeWidth="8" fill="none" />
                         <path d="M 10 50 A 40 40 0 0 1 90 50" stroke="url(#gradient)" strokeWidth="8" fill="none" strokeDasharray="125.6" strokeDashoffset={125.6 - (score/100 * 125.6)} style={{ transition: 'stroke-dashoffset 1s ease-out' }} />
                         <defs>
@@ -27,7 +27,7 @@ const BiasScanner: React.FC<BiasScannerProps> = ({ score, flags, alternatives })
                             </linearGradient>
                         </defs>
                     </svg>
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/4 text-center">
+                    <div className="relative text-center">
                         <p className={`font-clash text-5xl font-bold ${scoreColor}`}>{score}</p>
                         <p className="text-sm font-semibold text-gray-400">{scoreLabel}</p>
                     </div>

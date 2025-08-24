@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import type { AnalysisMode } from '../types';
 import ModeSelector from './ModeSelector'; // This is now the Sidebar

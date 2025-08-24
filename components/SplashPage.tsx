@@ -1,3 +1,4 @@
+
 import React, { useContext } from 'react';
 import HeroSection from './landing/HeroSection';
 import DeepfakeDemo from './landing/DeepfakeDemo';
@@ -14,25 +15,24 @@ import ThreatMatrix from './landing/ThreatMatrix';
 import { AuthContext } from '../context/AuthContext';
 
 interface SplashPageProps {
-  showLogin: () => void;
-  showSignUp: () => void;
+  showAuth: () => void;
   showDashboard: () => void;
 }
 
-const SplashPage: React.FC<SplashPageProps> = ({ showLogin, showSignUp, showDashboard }) => {
+const SplashPage: React.FC<SplashPageProps> = ({ showAuth, showDashboard }) => {
   const { currentUser } = useContext(AuthContext);
   
   const handleLaunch = () => {
     if (currentUser) {
       showDashboard();
     } else {
-      showSignUp();
+      showAuth();
     }
   };
 
   return (
     <div className="flex flex-col items-center w-full">
-        <Navbar showLogin={showLogin} showSignUp={showSignUp} showDashboard={showDashboard} />
+        <Navbar showAuth={showAuth} showDashboard={showDashboard} />
         <HeroSection onLaunch={handleLaunch} />
         <FeaturesScroller />
         <HowItWorks />

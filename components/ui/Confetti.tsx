@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const ConfettiPiece: React.FC<{ delay: number, color: string }> = ({ delay, color }) => {

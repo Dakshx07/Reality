@@ -1,15 +1,15 @@
+
 import React, { useState, useEffect, useContext } from 'react';
 import { RealityShieldLogo } from '../Icons';
 import { AuthContext } from '../../context/AuthContext';
 import UserDropdown from '../ui/UserDropdown';
 
 interface NavbarProps {
-  showLogin: () => void;
-  showSignUp: () => void;
+  showAuth: () => void;
   showDashboard: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ showLogin, showSignUp, showDashboard }) => {
+const Navbar: React.FC<NavbarProps> = ({ showAuth, showDashboard }) => {
     const [scrolled, setScrolled] = useState(false);
     const { currentUser, logout } = useContext(AuthContext);
 
@@ -40,10 +40,11 @@ const Navbar: React.FC<NavbarProps> = ({ showLogin, showSignUp, showDashboard })
                             <a 
                                 key={link.name} 
                                 href={link.href} 
-                                className="relative group text-gray-300 hover:text-white transition-colors py-2 text-lg font-medium opacity-0"
+                                className="animated-nav-link text-gray-300 text-lg font-medium opacity-0"
                                 style={{ animation: `holographic-flicker-in 0.5s ease-out ${0.4 + index * 0.1}s forwards` }}
                             >
-                                <span className="holographic-link relative">{link.name}</span>
+                                <span>{link.name}</span>
+                                <span className="glitch-brackets" aria-hidden="true"></span>
                             </a>
                         ))}
                     </nav>
@@ -60,13 +61,13 @@ const Navbar: React.FC<NavbarProps> = ({ showLogin, showSignUp, showDashboard })
                         ) : (
                             <>
                                 <button
-                                    onClick={showLogin}
+                                    onClick={showAuth}
                                     className="font-semibold text-gray-300 hover:text-white transition-colors"
                                 >
                                     Login
                                 </button>
                                 <button
-                                    onClick={showSignUp}
+                                    onClick={showAuth}
                                     className="font-semibold bg-white text-black py-2 px-5 rounded-full hover:bg-gray-200 transform hover:scale-105 transition-all duration-300"
                                 >
                                     Sign Up

@@ -1,3 +1,4 @@
+
 import React, { useContext } from 'react';
 import { RealityShieldLogo } from './Icons';
 import { AuthContext } from '../context/AuthContext';
@@ -7,12 +8,11 @@ import UserDropdown from './ui/UserDropdown';
 interface GlobalNavProps {
   view: View;
   showSplash: () => void;
-  showLogin: () => void;
-  showSignUp: () => void;
+  showAuth: () => void;
   showDashboard: () => void;
 }
 
-const GlobalNav: React.FC<GlobalNavProps> = ({ view, showSplash, showLogin, showSignUp, showDashboard }) => {
+const GlobalNav: React.FC<GlobalNavProps> = ({ view, showSplash, showAuth, showDashboard }) => {
     const { currentUser, logout } = useContext(AuthContext);
 
     return (
@@ -32,21 +32,21 @@ const GlobalNav: React.FC<GlobalNavProps> = ({ view, showSplash, showLogin, show
                              />
                         ) : (
                             <>
-                                {view !== 'login' && (
-                                    <button
-                                        onClick={showLogin}
-                                        className="font-semibold text-gray-300 hover:text-white transition-colors"
-                                    >
-                                        Login
-                                    </button>
-                                )}
-                                {view !== 'signup' && (
-                                    <button
-                                        onClick={showSignUp}
-                                        className="font-semibold bg-white text-black py-2 px-5 rounded-full hover:bg-gray-200 transform hover:scale-105 transition-all duration-300"
-                                    >
-                                        Sign Up
-                                    </button>
+                                {view !== 'auth' && (
+                                    <>
+                                        <button
+                                            onClick={showAuth}
+                                            className="font-semibold text-gray-300 hover:text-white transition-colors"
+                                        >
+                                            Login
+                                        </button>
+                                        <button
+                                            onClick={showAuth}
+                                            className="font-semibold bg-white text-black py-2 px-5 rounded-full hover:bg-gray-200 transform hover:scale-105 transition-all duration-300"
+                                        >
+                                            Sign Up
+                                        </button>
+                                    </>
                                 )}
                             </>
                         )}

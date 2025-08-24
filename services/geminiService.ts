@@ -1,5 +1,6 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
-import type { TextAnalysisResult, MediaAnalysisResult } from '../types';
+import type { TextAnalysisResult, MediaAnalysisResult, SpreadSimulationResult } from '../types';
 
 if (!process.env.API_KEY) {
     console.warn("API_KEY environment variable not set. Using a placeholder. AI features will not work.");
@@ -127,5 +128,49 @@ export const analyzeMedia = async (base64Data: string, mimeType: string): Promis
     } catch (error) {
         console.error("Error analyzing media:", error);
         throw new Error("Failed to analyze media. Please check the API key and try again.");
+    }
+};
+
+const spreadSimulationSchema = {
+    type: Type.OBJECT,
+    properties: {
+        originCountry: { type: Type.STRING, description: "The most likely country of origin for this narrative." },
+        primaryVectors: { type: Type.ARRAY, items: { type: Type.STRING }, description: "The main channels for spread (e.g., 'Twitter Bots', 'Facebook Groups')." },
+        targetDemographics: { type: Type.ARRAY, items: { type: Type.STRING }, description: "The demographics most susceptible to this claim." },
+        narrative: { type: Type.STRING, description: "A brief, 2-3 sentence narrative explaining the motivation and strategy behind the spread." },
+        spreadTimeline: {
+            type: Type.ARRAY,
+            description: "A list of events over a 14-day period. Include 5-8 key countries.",
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    day: { type: Type.INTEGER, description: "The simulation day (1-14)." },
+                    country: { type: Type.STRING, description: "The country where it is spreading." },
+                    reach: { type: Type.INTEGER, description: "The estimated number of people reached in that country on that day." }
+                },
+                required: ["day", "country", "reach"]
+            }
+        }
+    },
+    required: ["originCountry", "primaryVectors", "targetDemographics", "narrative", "spreadTimeline"]
+};
+
+export const simulateSpread = async (claim: string): Promise<SpreadSimulationResult> => {
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: `Analyze the following misinformation claim: "${claim}". Create a realistic but **fictional** simulation of its potential global spread. Provide the following information: an origin country, primary spreading vectors, target demographics, a brief narrative explaining the spread dynamics, and a timeline of spread with estimated reach in 5-8 key countries over 14 days.`,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: spreadSimulationSchema,
+            },
+        });
+        const jsonString = response.text.trim();
+        const result = JSON.parse(jsonString);
+        return result as SpreadSimulationResult;
+
+    } catch(error) {
+        console.error("Error simulating spread:", error);
+        throw new Error("Failed to generate simulation. Please check the API key and try again.");
     }
 };

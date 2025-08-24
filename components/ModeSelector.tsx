@@ -1,3 +1,4 @@
+
 import React from 'react';
 import type { AnalysisMode } from '../types';
 import { DocumentTextIcon, PhotoIcon, CubeTransparentIcon, GlobeAltIcon, RealityShieldLogo, PuzzlePieceIcon, TrendingUpIcon } from './Icons';

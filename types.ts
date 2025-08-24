@@ -12,7 +12,6 @@ export interface TextAnalysisResult {
   summary: string;
   tags: PropagandaTag[];
   highlightedText: string;
-  confidence: number;
   biasScore: number;
   flags: string[];
   alternatives: { name: string, url: string }[];
@@ -38,4 +37,16 @@ export interface ChallengeItem {
   mediaUrl?: string;
   isMisinfo: boolean;
   tip: string;
+}
+
+export interface SpreadSimulationResult {
+  originCountry: string;
+  primaryVectors: string[];
+  targetDemographics: string[];
+  narrative: string;
+  spreadTimeline: {
+    day: number;
+    country: string;
+    reach: number;
+  }[];
 }

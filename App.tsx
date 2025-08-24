@@ -1,12 +1,12 @@
+
 import React, { useState, useContext, useEffect } from 'react';
 import SplashPage from './components/SplashPage';
 import Dashboard from './components/Dashboard';
-import LoginPage from './components/auth/LoginPage';
-import SignUpPage from './components/auth/SignUpPage';
+import AuthPage from './components/auth/AuthPage';
 import { AuthContext } from './context/AuthContext';
 import GlobalNav from './components/GlobalNav';
 
-export type View = 'splash' | 'login' | 'signup' | 'dashboard';
+export type View = 'splash' | 'auth' | 'dashboard';
 
 function App() {
   const [view, setView] = useState<View>('splash');
@@ -21,29 +21,25 @@ function App() {
   }, [currentUser, view]);
 
   const showSplash = () => setView('splash');
-  const showLogin = () => setView('login');
-  const showSignUp = () => setView('signup');
+  const showAuth = () => setView('auth');
   const showDashboard = () => setView('dashboard');
 
   const renderView = () => {
     switch (view) {
       case 'splash':
-        return <SplashPage showLogin={showLogin} showSignUp={showSignUp} showDashboard={showDashboard} />;
-      case 'login':
-        // onLoginSuccess explicitly triggers the redirect to the dashboard.
-        return <LoginPage showSignUp={showSignUp} showSplash={showSplash} onLoginSuccess={showDashboard} />;
-      case 'signup':
-        // onSignUpSuccess explicitly triggers the redirect to the dashboard.
-        return <SignUpPage showLogin={showLogin} showSplash={showSplash} onSignUpSuccess={showDashboard} />;
+        return <SplashPage showAuth={showAuth} showDashboard={showDashboard} />;
+      case 'auth':
+        // onAuthSuccess explicitly triggers the redirect to the dashboard.
+        return <AuthPage onAuthSuccess={showDashboard} />;
       case 'dashboard':
-         // This is a protected view. If user is not logged in, redirect to sign up.
+         // This is a protected view. If user is not logged in, redirect to auth page.
          if (!currentUser) {
-            return <SignUpPage showLogin={showLogin} showSplash={showSplash} onSignUpSuccess={showDashboard} />;
+            return <AuthPage onAuthSuccess={showDashboard} />;
          }
         // Pass showSplash down to allow returning to the landing page.
         return <Dashboard showSplash={showSplash} />;
       default:
-        return <SplashPage showLogin={showLogin} showSignUp={showSignUp} showDashboard={showDashboard} />;
+        return <SplashPage showAuth={showAuth} showDashboard={showDashboard} />;
     }
   };
 
@@ -54,8 +50,7 @@ function App() {
             <GlobalNav 
                 view={view}
                 showSplash={showSplash}
-                showLogin={showLogin}
-                showSignUp={showSignUp}
+                showAuth={showAuth}
                 showDashboard={showDashboard}
             />
         )}

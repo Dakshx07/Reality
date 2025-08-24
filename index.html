@@ -1,7 +1,8 @@
+
 <!DOCTYPE html>
 <html lang="en" style="scroll-behavior: smooth;">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-T" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RealityShield</title>
@@ -88,27 +89,74 @@
         56% { opacity: 1; }
       }
       
-      /* Holographic Command Bar */
+      /* Animated Navigation */
       @keyframes holographic-flicker-in {
         0% { opacity: 0; transform: translateY(5px); }
         50% { opacity: 0.5; }
         100% { opacity: 1; transform: translateY(0); }
       }
-      .holographic-link::before,
-      .holographic-link::after {
+      .animated-nav-link {
+        position: relative;
+        padding: 0.5rem 0;
+        text-decoration: none;
+      }
+      .animated-nav-link > span:first-child {
+        transition: color 0.3s ease, text-shadow 0.3s ease;
+      }
+      .animated-nav-link:hover > span:first-child {
+        color: var(--accent-color);
+        text-shadow: 0 0 8px var(--glow-color);
+      }
+      .animated-nav-link::before {
         content: '';
         position: absolute;
-        bottom: -2px;
-        width: 8px;
+        left: 0;
+        bottom: 0;
+        width: 100%;
         height: 2px;
         background-color: var(--accent-color);
-        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-        opacity: 0;
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
       }
-      .holographic-link::before { left: 50%; transform: translateX(-50%) scaleX(0); }
-      .holographic-link::after { right: 50%; transform: translateX(50%) scaleX(0); }
-      .group:hover .holographic-link::before { left: 0; transform: translateX(0) scaleX(1); opacity: 1; }
-      .group:hover .holographic-link::after { right: 0; transform: translateX(0) scaleX(1); opacity: 1; }
+      .animated-nav-link:hover::before {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+      .animated-nav-link .glitch-brackets::before,
+      .animated-nav-link .glitch-brackets::after {
+        content: '';
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-style: solid;
+        border-color: var(--accent-color);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+      .animated-nav-link:hover .glitch-brackets::before,
+      .animated-nav-link:hover .glitch-brackets::after {
+        opacity: 1;
+        transform: translate(0, 0);
+      }
+      .animated-nav-link .glitch-brackets::before {
+        top: -2px;
+        left: -4px;
+        border-width: 2px 0 0 2px;
+        transform: translate(8px, 8px);
+      }
+      .animated-nav-link .glitch-brackets::after {
+        bottom: -2px;
+        right: -4px;
+        border-width: 0 2px 2px 0;
+        transform: translate(-8px, -8px);
+      }
+      .animated-nav-link:hover .glitch-brackets::before {
+        transition-delay: 0.1s;
+      }
+      .animated-nav-link:hover .glitch-brackets::after {
+        transition-delay: 0.1s;
+      }
 
 
       /* Orrery Hero Animations */
@@ -135,40 +183,39 @@
         to { transform: rotate(-360deg); }
       }
 
-      /* Auth Page Animations */
-      @keyframes core-pulse {
-        0%, 100% { 
-          transform: scale(1);
-          filter: drop-shadow(0 0 15px var(--glow-color)) brightness(1);
+      /* Auth Page Redesign Animations */
+      @keyframes auth-panel-left-enter {
+        from {
+          opacity: 0;
+          transform: translateX(-40px);
         }
-        50% { 
-          transform: scale(1.03);
-          filter: drop-shadow(0 0 25px var(--glow-color)) brightness(1.2);
-        }
-      }
-      @keyframes core-scan {
-        0%, 100% {
-          transform: scale(1.05);
-          filter: drop-shadow(0 0 30px #ff0055) brightness(1.3);
-        }
-        50% {
-          transform: scale(1.08);
-          filter: drop-shadow(0 0 40px #ff0055) brightness(1.5);
+        to {
+          opacity: 1;
+          transform: translateX(0);
         }
       }
-      @keyframes content-slide-in {
-        from { opacity: 0; transform: translateX(30px); }
-        to { opacity: 1; transform: translateX(0); }
+      @keyframes auth-panel-right-enter {
+        from {
+          opacity: 0;
+          transform: translateX(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
       }
-      .animate-content-slide-in {
-        animation: content-slide-in 0.3s ease-out forwards;
+      @keyframes form-content-in {
+          from {
+              opacity: 0;
+              transform: translateY(15px);
+          }
+          to {
+              opacity: 1;
+              transform: translateY(0);
+          }
       }
-      @keyframes content-slide-out {
-        from { opacity: 1; transform: translateX(0); }
-        to { opacity: 0; transform: translateX(-30px); }
-      }
-      .animate-content-slide-out {
-        animation: content-slide-out 0.3s ease-out forwards;
+      .animate-form-content-in {
+          animation: form-content-in 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
       }
       @keyframes form-field-cascade {
         from { opacity: 0; transform: translateY(20px); }
@@ -255,12 +302,16 @@
         from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
       }
-      @keyframes flicker-fast {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.8; }
+      @keyframes text-cycle {
+        0%, 20% { opacity: 1; transform: translateY(0); }
+        25%, 45% { opacity: 0; transform: translateY(-10px); }
+        50% { opacity: 0; transform: translateY(10px); }
+        55%, 75% { opacity: 1; transform: translateY(0); }
+        80%, 100% { opacity: 0; transform: translateY(-10px); }
       }
-      .animate-flicker-fast {
-        animation: flicker-fast 0.1s steps(2, jump-none) infinite;
+       @keyframes ai-core-pulse {
+        0%, 100% { transform: scale(0.95); box-shadow: 0 0 0 0 theme(colors.cyan.500/0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 10px theme(colors.cyan.500/0); }
       }
 
       /* Challenge Mode Animations */
@@ -276,6 +327,16 @@
       @keyframes confetti-burst {
         0% { transform: translateY(0) scale(0); opacity: 1; }
         100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+      }
+      
+      /* Global Threat Nexus */
+      @keyframes map-dot-pulse {
+        0%, 100% { transform: scale(0.8); opacity: 0.8; }
+        50% { transform: scale(1.2); opacity: 1; }
+      }
+      @keyframes highlight-pulse {
+        0%, 100% { filter: brightness(1); }
+        50% { filter: brightness(1.5) drop-shadow(0 0 5px currentColor); }
       }
     </style>
   <script type="importmap">
