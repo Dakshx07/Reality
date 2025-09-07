@@ -4,6 +4,14 @@ import type { ArDetectionResult } from '../types';
 import { CameraIcon, CheckCircleIcon } from './Icons';
 import CircularProgress from './ui/CircularProgress';
 
+const mockResults: ArDetectionResult[] = [
+    { score: 12, summary: "Claimed 'Miracle Cure' Debunked", source: "Source: World Health Organization, June 2024", confidence: 98, reasoning: "Matches a known health misinformation campaign." },
+    { score: 95, summary: "Authentic Product Information", source: "Source: Verified Manufacturer Scan, July 2024", confidence: 99, reasoning: "QR code and packaging match official records. No signs of tampering." },
+    { score: 25, summary: "Altered Political Flyer Detected", source: "Source: Cross-reference with original campaign materials", confidence: 92, reasoning: "Text has been subtly altered from the original to change meaning." },
+    { score: 88, summary: "Genuine Historical Landmark", source: "Source: Historical Archives, Public Records", confidence: 100, reasoning: "Object matches historical photos and records without discrepancies." },
+    { score: 5, summary: "Deepfake Video Overlay", source: "Source: AI Anomaly Detection", confidence: 96, reasoning: "Subtle visual artifacts indicate a real-time video manipulation overlay." },
+];
+
 const ArAnalysis: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
@@ -42,13 +50,7 @@ const ArAnalysis: React.FC = () => {
     setResult(null);
 
     setTimeout(() => {
-        const scanResult: ArDetectionResult = {
-            score: 12,
-            summary: "Claimed 'Miracle Cure' Debunked",
-            source: "Source: World Health Organization, June 2024",
-            confidence: 98,
-            reasoning: "The claim matches a known and widely debunked health misinformation campaign."
-        };
+        const scanResult = mockResults[Math.floor(Math.random() * mockResults.length)];
         setResult(scanResult);
         setIsScanning(false);
     }, 2500);
@@ -97,29 +99,33 @@ const ArAnalysis: React.FC = () => {
             </div>
         )}
       </div>
-      <div className="max-w-4xl mx-auto">
-        <button
-          onClick={handleScan}
-          disabled={isScanning}
-          className="mt-6 w-full bg-red-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-500 disabled:bg-neutral-700 disabled:cursor-not-allowed transition-colors text-lg"
-        >
-          {isScanning ? 'Scanning...' : 'Simulate Scan'}
-        </button>
+      
+      {/* Analysis Control Panel */}
+      <div className="max-w-4xl mx-auto mt-6">
+        <div className="bg-black/20 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
+          <button
+            onClick={handleScan}
+            disabled={isScanning}
+            className="w-full bg-red-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-500 disabled:bg-neutral-700 disabled:cursor-not-allowed transition-colors text-lg"
+          >
+            {isScanning ? 'Scanning...' : 'Simulate Scan'}
+          </button>
 
-        {result && (
-             <div className="mt-8 bg-black/50 backdrop-blur-md p-6 rounded-xl border border-cyan-500/50 shadow-lg animate-fade-in-up">
-                  <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                          <CircularProgress score={result.score} size="large" />
-                      </div>
-                      <div className="ml-6">
-                          <p className="font-clash text-xl text-gray-400">Credibility Score</p>
-                          <h3 className="text-3xl font-semibold text-red-500">{result.summary}</h3>
-                          <p className="text-md text-gray-300 mt-2 flex items-center"><CheckCircleIcon className="w-5 h-5 mr-2 text-green-400"/> {result.source}</p>
-                      </div>
-                  </div>
-              </div>
-        )}
+          {result && (
+               <div className="mt-6 bg-black/50 backdrop-blur-md p-6 rounded-xl border border-cyan-500/50 shadow-lg animate-fade-in-up">
+                    <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                            <CircularProgress score={result.score} size="large" />
+                        </div>
+                        <div className="ml-6">
+                            <p className="font-clash text-xl text-gray-400">Credibility Score</p>
+                            <h3 className="text-3xl font-semibold text-red-500">{result.summary}</h3>
+                            <p className="text-md text-gray-300 mt-2 flex items-center"><CheckCircleIcon className="w-5 h-5 mr-2 text-green-400"/> {result.source}</p>
+                        </div>
+                    </div>
+                </div>
+          )}
+        </div>
       </div>
     </div>
   );

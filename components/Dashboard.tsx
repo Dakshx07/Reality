@@ -7,6 +7,8 @@ import MediaAnalysis from './MediaAnalysis';
 import ArAnalysis from './ArAnalysis';
 import SpreadVisualization from './SpreadVisualization';
 import ChallengeMode from './ChallengeMode';
+import Leaderboard from './Leaderboard';
+import DailyDebunker from './DailyDebunker';
 
 interface DashboardProps {
   showSplash: () => void;
@@ -18,6 +20,8 @@ const componentMap: Record<AnalysisMode, React.FC<any>> = {
     media: MediaAnalysis,
     ar: ArAnalysis,
     spread: SpreadVisualization,
+    leaderboard: Leaderboard,
+    debunker: DailyDebunker,
 };
 
 const Dashboard: React.FC<DashboardProps> = ({ showSplash }) => {

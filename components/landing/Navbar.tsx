@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from 'react';
 import { RealityShieldLogo } from '../Icons';
 import { AuthContext } from '../../context/AuthContext';
@@ -20,6 +19,30 @@ const Navbar: React.FC<NavbarProps> = ({ showAuth, showDashboard }) => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+    
+    // New function to handle smooth scrolling
+    const handleNavClick = (e: React.MouseEvent<HTMLButtonElement>, targetId: string) => {
+        e.preventDefault();
+        
+        // Handle scroll to top for the logo
+        if (targetId === '#') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        const targetElement = document.getElementById(targetId.substring(1));
+        if (targetElement) {
+            const navbarHeight = 80; // height of the navbar in pixels
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    };
+
 
     const navLinks = [
         { name: 'How It Works', href: '#how-it-works' },
@@ -31,21 +54,21 @@ const Navbar: React.FC<NavbarProps> = ({ showAuth, showDashboard }) => {
         <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-black/40 backdrop-blur-lg border-b border-white/10' : 'bg-transparent'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
-                    <a href="#" className="flex items-center gap-2 opacity-0" style={{ animation: 'holographic-flicker-in 0.5s ease-out 0.2s forwards' }}>
+                    <button onClick={(e) => handleNavClick(e, '#')} className="flex items-center gap-2 opacity-0" style={{ animation: 'holographic-flicker-in 0.5s ease-out 0.2s forwards' }}>
                         <RealityShieldLogo className="h-8 w-8" />
                         <span className="font-clash text-2xl font-semibold">RealityShield</span>
-                    </a>
+                    </button>
                     <nav className="hidden md:flex items-center space-x-8">
                         {navLinks.map((link, index) => (
-                            <a 
+                            <button 
                                 key={link.name} 
-                                href={link.href} 
+                                onClick={(e) => handleNavClick(e, link.href)}
                                 className="animated-nav-link text-gray-300 text-lg font-medium opacity-0"
                                 style={{ animation: `holographic-flicker-in 0.5s ease-out ${0.4 + index * 0.1}s forwards` }}
                             >
                                 <span>{link.name}</span>
                                 <span className="glitch-brackets" aria-hidden="true"></span>
-                            </a>
+                            </button>
                         ))}
                     </nav>
                     <div 

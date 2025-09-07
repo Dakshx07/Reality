@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en" style="scroll-behavior: smooth;">
   <head>
-    <meta charset="UTF-T" />
+    <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RealityShield</title>
@@ -151,12 +151,6 @@
         border-width: 0 2px 2px 0;
         transform: translate(-8px, -8px);
       }
-      .animated-nav-link:hover .glitch-brackets::before {
-        transition-delay: 0.1s;
-      }
-      .animated-nav-link:hover .glitch-brackets::after {
-        transition-delay: 0.1s;
-      }
 
 
       /* Orrery Hero Animations */
@@ -302,6 +296,10 @@
         from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
       }
+      @keyframes staggered-fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
       @keyframes text-cycle {
         0%, 20% { opacity: 1; transform: translateY(0); }
         25%, 45% { opacity: 0; transform: translateY(-10px); }
@@ -328,6 +326,16 @@
         0% { transform: translateY(0) scale(0); opacity: 1; }
         100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
       }
+      @keyframes shake-horizontal {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+        20%, 40%, 60%, 80% { transform: translateX(8px); }
+      }
+      @keyframes scale-up-glow {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        50% { transform: scale(1.05); box-shadow: 0 0 30px 10px rgba(74, 222, 128, 0.4); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+      }
       
       /* Global Threat Nexus */
       @keyframes map-dot-pulse {
@@ -337,6 +345,38 @@
       @keyframes highlight-pulse {
         0%, 100% { filter: brightness(1); }
         50% { filter: brightness(1.5) drop-shadow(0 0 5px currentColor); }
+      }
+      @keyframes draw-line {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes radiate-out {
+          0% {
+              transform: scale(0);
+              opacity: 1;
+          }
+          100% {
+              transform: scale(2.5);
+              opacity: 0;
+          }
+      }
+      @keyframes node-scale-in-and-pulse {
+          0% {
+              transform: translate(-50%, -50%) scale(0);
+              box-shadow: 0 0 0 15px rgba(239, 68, 68, 0.5);
+          }
+          70% {
+              transform: translate(-50%, -50%) scale(1.1);
+              box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+          }
+          100% {
+              transform: translate(-50%, -50%) scale(1);
+          }
+      }
+      @keyframes organic-pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.2); }
       }
     </style>
   <script type="importmap">

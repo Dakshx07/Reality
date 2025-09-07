@@ -39,16 +39,25 @@ const SpreadVisualization: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<SpreadSimulationResult | null>(null);
     const [currentDay, setCurrentDay] = useState(0);
+    const [hasPlayedOnce, setHasPlayedOnce] = useState(false);
 
     useEffect(() => {
-        let timer: NodeJS.Timeout;
-        if (result) {
+        let timer: ReturnType<typeof setInterval>;
+        if (result && !hasPlayedOnce) {
             timer = setInterval(() => {
-                setCurrentDay(prev => (prev < 14 ? prev + 1 : 0));
-            }, 1000);
+                setCurrentDay(prev => {
+                    if (prev < 14) {
+                        return prev + 1;
+                    } else {
+                        clearInterval(timer);
+                        setHasPlayedOnce(true);
+                        return 14;
+                    }
+                });
+            }, 800);
         }
         return () => clearInterval(timer);
-    }, [result]);
+    }, [result, hasPlayedOnce]);
 
     const handleRunSimulation = async () => {
         if (!claim.trim()) {
@@ -59,6 +68,7 @@ const SpreadVisualization: React.FC = () => {
         setError(null);
         setResult(null);
         setCurrentDay(0);
+        setHasPlayedOnce(false);
         try {
             const simResult = await simulateSpread(claim);
             setResult(simResult);
@@ -104,10 +114,38 @@ const SpreadVisualization: React.FC = () => {
                     <div className="lg:col-span-2 bg-black/20 border border-white/10 rounded-2xl p-4 relative overflow-hidden aspect-video">
                         <div className="absolute inset-0 bg-center bg-no-repeat opacity-20" style={{ backgroundImage: `url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg')`, backgroundSize: 'contain' }}></div>
                         
+                        {/* Vector Lines SVG */}
+                        <svg className="absolute inset-0 w-full h-full" style={{transform: 'translate(-0.5%, -0.5%)'}}>
+                            {originCoords && nodesForDay.map((node, i) => {
+                                const destCoords = countryCoords[node.country] || null;
+                                if (!destCoords) return null;
+
+                                const x1 = parseFloat(originCoords.left);
+                                const y1 = parseFloat(originCoords.top);
+                                const x2 = parseFloat(destCoords.left);
+                                const y2 = parseFloat(destCoords.top);
+                                const length = Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+
+                                return (
+                                    <line
+                                        key={`line-${i}`}
+                                        x1={`${x1}%`} y1={`${y1}%`}
+                                        x2={`${x2}%`} y2={`${y2}%`}
+                                        stroke="rgba(255, 82, 82, 0.5)"
+                                        strokeWidth="1.5"
+                                        strokeDasharray={length}
+                                        strokeDashoffset={length}
+                                        style={{ animation: `draw-line 0.5s ${i * 0.1}s ease-out forwards` }}
+                                    />
+                                );
+                            })}
+                        </svg>
+
                         {/* Origin Node */}
                         {originCoords && (
-                             <div className="absolute w-4 h-4" style={{ top: originCoords.top, left: originCoords.left, transform: 'translate(-50%, -50%)' }}>
-                                 <div className="absolute inset-0 rounded-full bg-yellow-400 animate-map-dot-pulse"></div>
+                             <div className="absolute" style={{ top: originCoords.top, left: originCoords.left }}>
+                                 <div className="absolute w-4 h-4 rounded-full bg-yellow-400 animate-map-dot-pulse" style={{transform: 'translate(-50%, -50%)'}}></div>
+                                 <div className="absolute w-4 h-4 rounded-full border-2 border-yellow-300 animate-[radiate-out_2s_ease-out_infinite]" style={{transform: 'translate(-50%, -50%)'}}></div>
                              </div>
                         )}
                        
@@ -117,14 +155,28 @@ const SpreadVisualization: React.FC = () => {
                             if (!coords) return null;
                             const size = 4 + Math.log(node.reach) * 0.5;
                             return (
-                                <div key={`${i}-${node.country}`} className="absolute rounded-full bg-red-500/80 animate-fade-in" style={{
-                                    top: coords.top, left: coords.left,
-                                    width: `${size}px`, height: `${size}px`,
-                                    transform: `translate(-50%, -50%)`,
-                                    transition: `all 0.5s ease`,
-                                }}></div>
+                                <div 
+                                    key={`${i}-${node.country}`} 
+                                    className="absolute" 
+                                    style={{
+                                        top: coords.top, 
+                                        left: coords.left,
+                                        width: `${size}px`,
+                                        height: `${size}px`,
+                                        animation: `node-scale-in-and-pulse 1s ease-out forwards`,
+                                    }}
+                                >
+                                    <div 
+                                        className="w-full h-full rounded-full bg-red-500/80"
+                                        style={{
+                                            animation: `organic-pulse 3s ease-in-out infinite`,
+                                            animationDelay: `${1 + Math.random()}s`
+                                        }}
+                                    />
+                                </div>
                             )
                         })}
+
                         <div className="absolute bottom-2 left-2 bg-black/50 p-2 rounded-lg text-xs font-mono">
                             <span className="text-red-400 font-bold">DISCLAIMER:</span> THIS IS AN AI-GENERATED, FICTIONAL SIMULATION FOR EDUCATIONAL PURPOSES.
                         </div>

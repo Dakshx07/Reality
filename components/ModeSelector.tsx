@@ -1,7 +1,7 @@
 
 import React from 'react';
 import type { AnalysisMode } from '../types';
-import { DocumentTextIcon, PhotoIcon, CubeTransparentIcon, GlobeAltIcon, RealityShieldLogo, PuzzlePieceIcon, TrendingUpIcon } from './Icons';
+import { DocumentTextIcon, PhotoIcon, CubeTransparentIcon, GlobeAltIcon, RealityShieldLogo, PuzzlePieceIcon, TrendingUpIcon, TrophyIcon, NewspaperIcon } from './Icons';
 
 interface SidebarProps {
   currentMode: AnalysisMode;
@@ -25,8 +25,10 @@ const advancedTools: NavMode[] = [
     { id: 'spread', name: 'Spread Visualizer', icon: <GlobeAltIcon className="h-6 w-6" /> },
 ];
 
-const training: NavMode[] = [
+const trainingAndCommunity: NavMode[] = [
     { id: 'challenge', name: 'Truth Defender', icon: <PuzzlePieceIcon className="h-6 w-6" /> },
+    { id: 'leaderboard', name: 'Leaderboard', icon: <TrophyIcon className="h-6 w-6" /> },
+    { id: 'debunker', name: 'Daily Debunker', icon: <NewspaperIcon className="h-6 w-6" /> },
 ];
 
 
@@ -65,8 +67,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentMode, onSelectMode, onShowSpla
                 {advancedTools.map(mode => <NavItem key={mode.id} mode={mode} isActive={currentMode === mode.id} onClick={() => onSelectMode(mode.id)} />)}
             </div>
              <div className="pt-4">
-                <h3 className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Training</h3>
-                {training.map(mode => <NavItem key={mode.id} mode={mode} isActive={currentMode === mode.id} onClick={() => onSelectMode(mode.id)} />)}
+                <h3 className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Community & Training</h3>
+                {trainingAndCommunity.map(mode => <NavItem key={mode.id} mode={mode} isActive={currentMode === mode.id} onClick={() => onSelectMode(mode.id)} />)}
             </div>
         </nav>
     </aside>
