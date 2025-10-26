@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import type { ChallengeItem } from '../types';
 import Confetti from './ui/Confetti';
 import { AcademicCapIcon, CheckCircleIcon, ShieldExclamationIcon } from './Icons';
 import useLocalStorage from '../hooks/useLocalStorage';
 
+// Define the data for all challenges
 const allChallenges: ChallengeItem[] = [
   { id: 1, claim: "Eating oranges prevents COVID-19 because of Vitamin C.", isMisinfo: true, tip: "While Vitamin C is good for immunity, it's not a proven cure or prevention for COVID-19. Always check with health authorities like the WHO." },
   { id: 2, claim: "A study found that regular exercise can improve cardiovascular health.", isMisinfo: false, tip: "This claim is well-supported by scientific evidence. Reputable health organizations consistently recommend exercise." },
@@ -24,7 +24,7 @@ const allChallenges: ChallengeItem[] = [
 ];
 
 // Simple seeded shuffle to get the same "random" order for a given day
-const seededShuffle = (array: ChallengeItem[], seed: string) => {
+const seededShuffle = (array: ChallengeItem[], seed: string): ChallengeItem[] => {
     const newArr = [...array];
     let m = newArr.length;
     let t;
@@ -33,7 +33,7 @@ const seededShuffle = (array: ChallengeItem[], seed: string) => {
     // Create a numeric seed from the date string
     const numSeed = seed.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     
-    // Custom pseudo-random generator
+    // Custom pseudo-random generator using mulberry32 algorithm for better distribution
     const mulberry32 = (a: number) => {
         return () => {
           var t = a += 0x6D2B79F5;
@@ -44,6 +44,7 @@ const seededShuffle = (array: ChallengeItem[], seed: string) => {
     }
     const random = mulberry32(numSeed);
 
+    // Fisher-Yates (aka Knuth) Shuffle algorithm
     while (m) {
         i = Math.floor(random() * m--);
         t = newArr[m];
@@ -55,56 +56,73 @@ const seededShuffle = (array: ChallengeItem[], seed: string) => {
 };
 
 const ChallengeMode: React.FC = () => {
+    // Use localStorage for persistent storage of score and last completion date
     const [score, setScore] = useLocalStorage<number>('challengeScore', 0);
     const today = new Date().toISOString().split('T')[0];
     const [lastCompletionDate, setLastCompletionDate] = useLocalStorage<string | null>('challengeLastCompletion', null);
     
+    // State for managing the current game session
     const [streak, setStreak] = useState(0);
     const [currentChallengeIndex, setCurrentChallengeIndex] = useState(0);
     const [answerState, setAnswerState] = useState<'correct' | 'incorrect' | 'unanswered'>('unanswered');
     const [showConfetti, setShowConfetti] = useState(false);
 
     // useMemo ensures that the challenges are only re-shuffled when the 'today' string changes.
+    // This optimizes performance by avoiding unnecessary re-shuffling.
     const challenges = useMemo(() => {
+        // Shuffle challenges and take the first 7 for the daily set
         return seededShuffle(allChallenges, today).slice(0, 7);
     }, [today]);
     
     // This effect resets the game state if the challenges array changes (i.e., a new day has begun).
+    // It ensures a fresh game state for each new day.
     useEffect(() => {
         setCurrentChallengeIndex(0);
         setAnswerState('unanswered');
         setStreak(0);
     }, [challenges]);
     
+    // Determine if the challenges for today have already been completed
     const isCompletedToday = lastCompletionDate === today;
 
+    // Render null if there are no challenges (e.g., during initial loading or if allChallenges is empty)
     if (challenges.length === 0) return null;
     
     const currentChallenge = challenges[currentChallengeIndex];
 
+    // Handles the user's answer submission
     const handleAnswer = (isMisinfoGuess: boolean) => {
+        // Prevent multiple answers for the same challenge
         if (answerState !== 'unanswered') return;
+
         if (isMisinfoGuess === currentChallenge.isMisinfo) {
+            // Correct answer logic
             setAnswerState('correct');
             setScore(prev => prev + 10);
             setStreak(prev => prev + 1);
             setShowConfetti(true);
+            // Hide confetti after a short duration
             setTimeout(() => setShowConfetti(false), 2000);
         } else {
+            // Incorrect answer logic
             setAnswerState('incorrect');
             setStreak(0);
         }
     };
     
+    // Handles moving to the next challenge or finishing the game
     const handleNext = () => {
         setAnswerState('unanswered');
         if (currentChallengeIndex === challenges.length - 1) {
+            // Mark today's challenges as completed
             setLastCompletionDate(today);
         } else {
+            // Move to the next challenge
             setCurrentChallengeIndex(prev => prev + 1);
         }
     }
     
+    // Component to display the current challenge
     const GameCard = () => (
         <div key={currentChallenge.id} className="relative animate-[challenge-card-in_0.5s_ease-out_forwards]">
             {showConfetti && <Confetti />}
@@ -123,8 +141,10 @@ const ChallengeMode: React.FC = () => {
         </div>
     );
 
+    // Component to display the result after answering a challenge
     const ResultCard = () => {
         const isCorrect = answerState === 'correct';
+        // Apply animations based on correctness
         const animationClass = isCorrect ? 'animate-[scale-up-glow_0.6s_ease-out_forwards]' : 'animate-[shake-horizontal_0.5s_ease-in-out_forwards]';
         return (
             <div className={`bg-black/20 border border-white/10 rounded-2xl p-8 ${animationClass}`}>
@@ -148,6 +168,7 @@ const ChallengeMode: React.FC = () => {
         );
     };
 
+    // Component to display when all daily challenges are completed
     const CompletionScreen = () => (
          <div className="bg-black/20 border border-white/10 rounded-2xl p-8 text-center flex flex-col items-center justify-center h-full animate-[challenge-card-in_0.5s_ease-out_forwards]">
             <CheckCircleIcon className="w-20 h-20 text-green-400" />
@@ -159,6 +180,7 @@ const ChallengeMode: React.FC = () => {
         </div>
     );
 
+    // Main render logic for the ChallengeMode component
     return (
         <div>
             <h1 className="font-clash text-5xl font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-400">Cognitive Training Simulator</h1>
@@ -171,6 +193,7 @@ const ChallengeMode: React.FC = () => {
                     {isCompletedToday ? (
                         <CompletionScreen />
                     ) : (
+                        // Conditionally render GameCard or ResultCard based on answerState
                         answerState === 'unanswered' ? <GameCard /> : <ResultCard />
                     )}
                 </div>
